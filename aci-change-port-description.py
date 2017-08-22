@@ -42,6 +42,12 @@ def is_leaf(dn):
     return int(node.group(1)) < 199
 
 
+# Returns the node name
+def get_node_name(dn):
+    node = re.search('node-(\d+)', dn)
+    return node.group(1)
+
+
 session = LoginSession(cred.URL, cred.LOGIN, cred.PASSWORD)
 moDir = MoDirectory(session)
 moDir.login()
@@ -57,10 +63,12 @@ infraInfra = Infra(uniMo)
 
 for adjEp in lldpAdjEps:
     if is_leaf(str(adjEp.dn)):
-        infraHPathS = HPathS(infraInfra, name=str(adjEp.sysName), descr=str(adjEp.sysName))
+        infraHPathS = HPathS(infraInfra, name="adjEp-{0}-{1}".format(str(adjEp.sysName), get_node_name(str(adjEp.dn))),
+                             descr=str(adjEp.sysName))
         infraRsHPathAtt = RsHPathAtt(infraHPathS, tDn=concat_path_ep(str(adjEp.dn)))
     else:
-        infraSHPathS = SHPathS(infraInfra, name=str(adjEp.sysName), descr=str(adjEp.sysName))
+        infraSHPathS = SHPathS(infraInfra, name="adjEp-{0}-{1}".format(str(adjEp.sysName), get_node_name(str(adjEp.dn))),
+                               descr=str(adjEp.sysName))
         infraRsSHPathAtt = RsSHPathAtt(infraSHPathS, tDn=concat_path_ep(str(adjEp.dn)))
 
 configReq = ConfigRequest()
