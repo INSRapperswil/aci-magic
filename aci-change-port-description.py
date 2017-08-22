@@ -13,16 +13,42 @@
 #
 #######################################################################
 
-from acitoolkit.acitoolkit import *
-import credentials
+from cobra.mit.access import MoDirectory
+from cobra.mit.session import LoginSession
+from cobra.mit.request import ConfigRequest
 
-session = Session(credentials.URL, credentials.LOGIN, credentials.PASSWORD)
-resp = session.login()
-if not resp.ok:
-    print 'Login to ACI was not successful'
+from cobra.model.fv import Tenant
+import cobra.model.lldp
 
-tenants = Tenant.get(session)
+import credentials as cred
+
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
+def get_tenant(tenant, tenant_list):
+    for tenant_entry in tenant_list:
+        if tenant_entry.name == tenant:
+            return tenant_entry
 
+# configReq = ConfigRequest()
+session = LoginSession(cred.URL, cred.LOGIN, cred.PASSWORD)
+moDir = MoDirectory(session)
 
+moDir.login()
+
+uniMo = moDir.lookupByDn('uni')
+# uniMo = moDir.lookupByClass('polUni')
+
+# fvTenantMo = Tenant(uniMo, 'TestTenant')
+testTenantMo = moDir.lookupByClass("fvTenant", propFilter='and(eq(fvTenant.name, "TestTenant"))')
+lldpAdjEps = moDir.lookupByClass('lldpAdjEp')
+if lldpAdjEps:
+    print "Found adjacent hosts via LLDP:"
+for adjEp in lldpAdjEps:
+    print str(adjEp.dn) + " is connected to " + str(adjEp.sysName)
+
+# configReq.addMo(tenant1Mo)
+
+# moDir.commit(configReq)
+moDir.logout()
