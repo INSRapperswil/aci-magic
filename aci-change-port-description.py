@@ -17,7 +17,7 @@ from cobra.mit.access import MoDirectory
 from cobra.mit.session import LoginSession
 from cobra.mit.request import ConfigRequest
 
-from cobra.model.infra import Infra, HPathS, RsHPathAtt
+from cobra.model.infra import Infra, HPathS, RsHPathAtt, SHPathS, RsSHPathAtt
 
 import credentials as cred
 import re
@@ -36,6 +36,12 @@ def concat_path_ep(dn):
     return None
 
 
+# Checks if its a leaf switch
+def is_leaf(dn):
+    node = re.search('node-(\d+)', dn)
+    return int(node.group(1)) < 199
+
+
 session = LoginSession(cred.URL, cred.LOGIN, cred.PASSWORD)
 moDir = MoDirectory(session)
 moDir.login()
@@ -50,8 +56,12 @@ for adjEp in lldpAdjEps:
 infraInfra = Infra(uniMo)
 
 for adjEp in lldpAdjEps:
-    infraHPathS = HPathS(infraInfra, name=str(adjEp.sysName), descr=str(adjEp.sysName))
-    infraRsHPathAtt = RsHPathAtt(infraHPathS, tDn=concat_path_ep(str(adjEp.dn)))
+    if is_leaf(str(adjEp.dn)):
+        infraHPathS = HPathS(infraInfra, name=str(adjEp.sysName), descr=str(adjEp.sysName))
+        infraRsHPathAtt = RsHPathAtt(infraHPathS, tDn=concat_path_ep(str(adjEp.dn)))
+    else:
+        infraSHPathS = SHPathS(infraInfra, name=str(adjEp.sysName), descr=str(adjEp.sysName))
+        infraRsSHPathAtt = RsSHPathAtt(infraSHPathS, tDn=concat_path_ep(str(adjEp.dn)))
 
 configReq = ConfigRequest()
 configReq.addMo(infraInfra)

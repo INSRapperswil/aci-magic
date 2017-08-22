@@ -1,0 +1,24 @@
+{
+  "infraHPathS": {
+    "attributes": {
+      "dn": "uni\/infra\/hpaths-acisp01",
+      "name": "acisp01",
+      "descr": "acisp01",
+      "rn": "hpaths-acisp01",
+      "status": "created"
+    },
+    "children": [
+      {
+        "infraRsHPathAtt": {
+          "attributes": {
+            "tDn": "topology\/pod-1\/paths-101\/pathep-[eth1\/49]",
+            "status": "created"
+          },
+          "children": [
+
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "infraSHPathS": {
+    "attributes": {
+      "dn": "uni\/infra\/shpaths-acile01",
+      "name": "acile01",
+      "descr": "acile01",
+      "rn": "shpaths-acile01",
+      "status": "created"
+    },
+    "children": [
+      {
+        "infraRsSHPathAtt": {
+          "attributes": {
+            "tDn": "topology\/pod-1\/paths-201\/pathep-[eth1\/1]",
+            "status": "created"
+          },
+          "children": [
+
+          ]
+        }
+      }
+    ]
+  }
+}
