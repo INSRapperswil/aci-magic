@@ -2,12 +2,12 @@
 Collection of some helpful Cisco ACI Python scripts.
 
 ## Prerequisites
-All script require [acitoolkit](https://github.com/datacenter/acitoolkit). 
+All scripts require [acitoolkit](https://github.com/datacenter/acitoolkit). 
 Please refer to their documentation in order to install it.
 
 You can also use PIP to install acitoolkit:
 ```bash
-pip2.7 search acitoolkit
+pip install acitoolkit
 ```
 
 ## Usage

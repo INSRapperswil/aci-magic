@@ -8,8 +8,8 @@
 #######################################################################
 
 from acitoolkit.acitoolkit import Tenant, Session, Filter, FilterEntry
-import credentials
-import csv
+import pandas as pd
+import credentials as cred
 
 
 def get_tenant(tenant, tenant_list):
@@ -18,24 +18,30 @@ def get_tenant(tenant, tenant_list):
             return tenant_entry
 
 
-
-
-session = Session(credentials.URL, credentials.LOGIN, credentials.PASSWORD)
+session = Session(cred.URL, cred.LOGIN, cred.PASSWORD)
 resp = session.login()
 if not resp.ok:
     print 'Login to ACI was not successful'
 
 common_tenant = get_tenant('common', Tenant.get(session))
 
-filterX = Filter('VoIP_Telephony', common_tenant)
+data = pd.read_csv('filter_entries.csv')
+filterObj = dict()
+for f in data.filterName.unique():
+    filterObj[f] = Filter(f, common_tenant)
 
-FilterEntry('SIP',
-             applyToFrag='no',
-             dFromPort='5060',
-             dToPort='5061',
-             etherT='ip',
-             prot='tcp',
-             parent=filterX)
+for index, row in data.iterrows():
+    FilterEntry(str(row['filterEntryName']),
+                applyToFrag=str(row['applyToFrag']),
+                arpOpc=str(row['arpOpc']),
+                stateful=str(row['stateful']),
+                etherT=str(row['etherT']),
+                prot=str(row['prot']),
+                sFromPort=str(row['sFromPort']),
+                sToPort=str(row['sToPort']),
+                dFromPort=str(row['dFromPort']),
+                dToPort=str(row['dToPort']),
+                parent=filterObj[str(row['filterName'])])
 
 if common_tenant:
     resp = common_tenant.push_to_apic(session)
