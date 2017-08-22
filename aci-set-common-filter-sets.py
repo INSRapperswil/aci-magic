@@ -25,7 +25,7 @@ if not resp.ok:
 
 common_tenant = get_tenant('common', Tenant.get(session))
 
-data = pd.read_csv('filter_entries.csv')
+data = pd.read_csv('resources/filter_entries.csv')
 filterObj = dict()
 for f in data.filterName.unique():
     filterObj[f] = Filter(f, common_tenant)

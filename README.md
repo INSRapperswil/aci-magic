@@ -2,12 +2,17 @@
 Collection of some helpful Cisco ACI Python scripts.
 
 ## Prerequisites
-All scripts require [acitoolkit](https://github.com/datacenter/acitoolkit). 
-Please refer to their documentation in order to install it.
+All scripts require [acitoolkit](https://github.com/datacenter/acitoolkit) **or** the ACI Cobra SDK. 
 
-You can also use PIP to install acitoolkit:
+You can use PIP to install acitoolkit:
 ```bash
 pip install acitoolkit
+```
+
+Download the Cobra SDK from [http[s]://APIC address/cobra/_downloads/](http[s]://APIC address/cobra/_downloads/) and install the two `.egg` files using the following commands:
+```bash
+easy_install acimodel-<version>-py2.7.egg
+easy_install acicobra-<version>-py2.7.egg
 ```
 
 ## Usage
