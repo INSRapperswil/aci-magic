@@ -12,11 +12,8 @@ pip install acitoolkit
 
 ## Usage
 First you have to rename the file `credentials_template.py` to `credentials.py` and edit the credentials inside this file.
-
 Now you should be able to run the scripts with `./<script-name>.py`.
 
-## Debug
-If you run into an error like `'Connection aborted.', error(54, 'Connection reset by peer')`, install `requests[security]`:
-```bash
-pip install requests[security]
-```
+
+## Development
+**Hint:** Use `arya` [datacenter/arya](https://github.com/datacenter/arya) in order to generate Python code (Cobra) from a JSON POST example captured with the Cisco ACI API Inspector.

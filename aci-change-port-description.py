@@ -17,38 +17,44 @@ from cobra.mit.access import MoDirectory
 from cobra.mit.session import LoginSession
 from cobra.mit.request import ConfigRequest
 
-from cobra.model.fv import Tenant
-import cobra.model.lldp
+from cobra.model.infra import Infra, HPathS, RsHPathAtt
 
 import credentials as cred
-
+import re
 import urllib3
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
-def get_tenant(tenant, tenant_list):
-    for tenant_entry in tenant_list:
-        if tenant_entry.name == tenant:
-            return tenant_entry
+# Concatenates tDN of RsHPathAtt
+def concat_path_ep(dn):
+    pod = re.search('pod-(\d+)', dn)
+    node = re.search('node-(\d+)', dn)
+    port = re.search('\[(eth\d+/\d+)\]', dn)
+    if port and node:
+        return 'topology/pod-' + pod.group(1) + '/paths-' + node.group(1) + '/pathep-[' + port.group(1) + ']'
+    return None
 
-# configReq = ConfigRequest()
+
 session = LoginSession(cred.URL, cred.LOGIN, cred.PASSWORD)
 moDir = MoDirectory(session)
-
 moDir.login()
-
 uniMo = moDir.lookupByDn('uni')
-# uniMo = moDir.lookupByClass('polUni')
 
-# fvTenantMo = Tenant(uniMo, 'TestTenant')
-testTenantMo = moDir.lookupByClass("fvTenant", propFilter='and(eq(fvTenant.name, "TestTenant"))')
 lldpAdjEps = moDir.lookupByClass('lldpAdjEp')
 if lldpAdjEps:
     print "Found adjacent hosts via LLDP:"
 for adjEp in lldpAdjEps:
     print str(adjEp.dn) + " is connected to " + str(adjEp.sysName)
 
-# configReq.addMo(tenant1Mo)
+infraInfra = Infra(uniMo)
 
-# moDir.commit(configReq)
+for adjEp in lldpAdjEps:
+    infraHPathS = HPathS(infraInfra, name=str(adjEp.sysName), descr=str(adjEp.sysName))
+    infraRsHPathAtt = RsHPathAtt(infraHPathS, tDn=concat_path_ep(str(adjEp.dn)))
+
+configReq = ConfigRequest()
+configReq.addMo(infraInfra)
+moDir.commit(configReq)
+
 moDir.logout()
