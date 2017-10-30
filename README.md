@@ -9,7 +9,7 @@ You can use PIP to install acitoolkit:
 pip install acitoolkit
 ```
 
-Download the Cobra SDK from [http[s]://APIC address/cobra/_downloads/](http[s]://APIC address/cobra/_downloads/) and install the two `.egg` files using the following commands:
+Download the Cobra SDK from [https://APIC_ADDRESS/cobra/_downloads/](https://APIC_ADDRESS/cobra/_downloads/) and install the two `.egg` files using the following commands:
 ```bash
 easy_install acimodel-<version>-py2.7.egg
 easy_install acicobra-<version>-py2.7.egg

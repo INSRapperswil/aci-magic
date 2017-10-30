@@ -16,6 +16,7 @@ def get_tenant(tenant, tenant_list):
     for tenant_entry in tenant_list:
         if tenant_entry.name == tenant:
             return tenant_entry
+    return None
 
 
 session = Session(cred.URL, cred.LOGIN, cred.PASSWORD)
@@ -24,6 +25,10 @@ if not resp.ok:
     print 'Login to ACI was not successful'
 
 common_tenant = get_tenant('common', Tenant.get(session))
+
+if common_tenant is None:
+    print 'Common tenant not found!'
+    exit()
 
 data = pd.read_csv('resources/filter_entries.csv')
 filterObj = dict()
@@ -43,10 +48,9 @@ for index, row in data.iterrows():
                 dToPort=str(row['dToPort']),
                 parent=filterObj[str(row['filterName'])])
 
-if common_tenant:
-    resp = common_tenant.push_to_apic(session)
-    if resp.ok:
-        print 'Successfully committed changes'
-    else:
-        print 'Failed to commit changes'
-        print resp.text
+resp = common_tenant.push_to_apic(session)
+if resp.ok:
+    print 'Successfully committed changes'
+else:
+    print 'Failed to commit changes'
+    print resp.text
